@@ -1,0 +1,38 @@
+// Importar los módulos necesarios
+const express = require('express');
+const http = require('http');
+const socketIO = require('socket.io');
+
+// Configurar la aplicación Express
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
+// Definir la ruta principal
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+
+// Configurar la conexión de socket
+io.on('connection', (socket) => {
+  console.log('Usuario conectado');
+
+  // Manejar el evento de recibir un nuevo mensaje
+  socket.on('chat message', (msg) => {
+    console.log('Mensaje recibido: ' + msg);
+
+    // Emitir el mensaje a todos los usuarios conectados
+    io.emit('chat message', msg);
+  });
+
+  // Manejar el evento de desconexión de un usuario
+  socket.on('disconnect', () => {
+    console.log('Usuario desconectado');
+  });
+});
+
+// Iniciar el servidor
+const port = 3000;
+server.listen(port, () => {
+  console.log('Servidor iniciado en http://localhost:' + port);
+});
