@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+  <script>
+    // Conectar con el servidor mediante socket
+    const socket = io();
+
+    // Manejar el envío del formulario
+    function sendMessage() {
+      const input = document.getElementById('message-input');
+      const message = input.value;
+
+      // Enviar el mensaje al servidor
+      socket.emit('chat message', message);
+
+      // Limpiar el campo de entrada
+      input.value = '';
+
+      return false;
+    }
+
+    // Manejar la recepción de mensajes
+    socket.on('chat message', (msg) => {
+      const messages = document.getElementById('messages');
+      const li = document.createElement('li');
+      li.textContent = msg;
+      messages.appendChild(li);
+    });
+  </script>
+</head>
+<body>
+  <ul id="messages"></ul>
+  <form onsubmit="return sendMessage();">
+    <input id="message-input" autocomplete="off" />
+    <button>Enviar</button>
+  </form>
+</body>
+</html>
